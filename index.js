@@ -24,7 +24,29 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/:date?", function (req, res) {
+  const dateParam = req.params.date;
+  let date;
 
+  if (!dateParam) {
+    // If the date parameter is empty, return the current time
+    date = new Date();
+  } else {
+    // Try to parse the provided date string (assuming it's in milliseconds)
+    date = new Date(parseInt(dateParam)); // Parse as an integer and multiply by 1000
+  }
+
+  if (isNaN(date)) {
+    // If the date is invalid, return an error object
+    return res.json({ error: "Invalid Date" });
+  }
+
+  // Return a JSON object with Unix timestamp and UTC date string
+  res.json({
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  });
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
